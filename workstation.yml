@@ -11,9 +11,9 @@
     - common_desktop
     - common_snap
     - secure-dns
+    - gnome_settings
     - ufw
     - clamav
+    - test_and_kill # test and kill scripts
     #- tuned
     #- dotfiles # <- force shit load of stuff fish/starship for all users
-    - test_and_kill # test and kill scripts
-
