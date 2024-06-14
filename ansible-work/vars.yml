@@ -1,0 +1,20 @@
+---
+wazuh_agent_name: "unkown"
+sshd_enabled: false
+firewall_enabled: true
+virus_scanner_enabled: true
+wazuh_agent_enabled: true
+wazuh_server: "rapia.wazuh.rip"
+automatic_reboot_enabled: false # if update requires reboot
+helix_replace_vim: false
+helix_version: 24.03
+timezone: Europe/Helsinki
+default_shell: /usr/bin/fish
+#user: # own user name if dots needed
+
+# tuned profiles, uncomment one
+tuned_profile: "laptop-battery-powersave"
+#tuned_profile: "laptop-ac-powersave"
+#tuned_profile: "desktop"
+
+

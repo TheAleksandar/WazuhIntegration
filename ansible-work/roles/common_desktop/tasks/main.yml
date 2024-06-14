@@ -1,0 +1,32 @@
+- name: install virt-manager and libvirt
+  apt:
+    name:
+      - virt-manager
+      - qemu-kvm
+      - libvirt-daemon-system
+      - virtinst
+      - virt-viewer
+      - remmina
+    state: present
+
+- name: check if /usr/bin/code exists
+  stat:
+    path: /usr/bin/code
+  register: vscode_installed
+
+- name: download and install vscode
+  block:
+  - name: download vscode deb
+    get_url:
+      url: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+      dest: /tmp/code_latest_amd64.deb
+    register: download_vscode
+
+  - name: install vscode deb
+    apt:
+      deb: /tmp/code_latest_amd64.deb
+      state: present
+    when: download_vscode.changed
+  when: not vscode_installed.stat.exists
+  
+

@@ -1,0 +1,68 @@
+---
+#IMPORTANT: clamd does not currently protect or authenticate traffic coming over the TCP socket, meaning it will accept any and all of the following commands listed from any source. Thus, we strongly recommend following best networking practices when setting up your clamd instance. I.e. don't expose your TCP socket to the Internet.
+
+# This playbook enables and configures ClamAV, an open-source antivirus software, on the target system.
+# It performs the following tasks:
+# 1. Installs ClamAV, ClamAV daemon, and ClamAV freshclam.
+# 2. Updates the ClamAV database using the freshclam command.
+# 3. Schedules regular updates of the ClamAV database using cron.
+# 4. Schedules regular scans of the home directory and the full system using cron.
+#    - The home directory scan runs every 3 hours.
+#    - The full system scan runs at 7 AM every day.
+#    - Both scans are performed by the root user.
+# The execution of these tasks is conditional on the variable 'virus_scanner_enabled' being set to true.
+
+- name: enable and configure clamav
+  block:
+  - name: install and configure clamav
+    apt:
+      name:
+        - clamav
+        - clamav-daemon
+        - clamav-freshclam
+      state: present
+
+  - name: schedule clamav database updates
+    cron:
+      name: "update clamav database"
+      minute: "45"
+      hour: "*/3"
+      job: "freshclam"
+
+  - name: schedule clamav scans
+    cron:
+      name: "scan home directory"
+      minute: "0"
+      hour: "*/3"
+      job: "clamdscan -i --config-file=/etc/clamav/clamd.conf /home" # -i makes sure we dont log to syslog personal file names
+      user: root
+
+  - name: schedule clamav scans full system
+    cron:
+      name: "scan full system"
+      minute: "0"
+      hour: "7"
+      job: "clamdscan -i --config-file=/etc/clamav/clamd.conf /"
+      user: root
+
+  - name: copy clamd.conf to /etc/clamav/clamd.conf
+    copy:
+      src: clamd.conf
+      dest: /etc/clamav/clamd.conf
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: enable and start clamav-freshclam.service
+    systemd:
+        name: clamav-freshclam.service
+        enabled: true
+        state: started
+
+  - name: enable and start clamav-daemon.service
+    systemd:
+        name: clamav-daemon.service
+        enabled: true
+        state: started
+
+  when: virus_scanner_enabled == true

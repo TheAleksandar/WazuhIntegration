@@ -1,0 +1,108 @@
+---
+###################################################################
+- name: list all users who has password set
+  shell: "cat /etc/shadow | grep -v '^[^:]*:[*!]' | cut -d: -f1"
+  register: users
+  changed_when: false
+
+###################################################################
+
+- name: print all users
+  debug:
+    var: users.stdout_lines
+
+- name: change default shell to fish all users
+  user:
+    name: "{{ item }}"
+    shell: /usr/bin/fish
+  loop: "{{ users.stdout_lines }}"
+  
+- name: change default shell to fish root when not other user 
+  user:
+    name: root
+    shell: /usr/bin/fish
+  ignore_errors: true
+  
+######################################################################
+
+- name: test if file /usr/local/bin/starship exists
+  stat:
+    path: /usr/local/bin/starship
+  register: starship_file
+
+- name: Install Starship if not exists
+  shell: |
+    curl -fsSL https://starship.rs/install.sh | sh -s -- -y
+  when: starship_file.stat.exists == false
+
+- name: create folders
+  become: true
+  become_user: "{{ item }}"
+  file:
+    path: "~/.config/fish/conf.d"
+    recurse: yes
+    owner: "{{ item }}"
+    state: directory
+  loop: "{{ users.stdout_lines  }}"
+
+- name: copy starship config to ~/.config/starship.toml
+  become: true
+  become_user: "{{ item }}"
+  copy:
+    src: starship.toml
+    dest: "~/.config/starship.toml"
+    owner: "{{ item }}"
+  loop: "{{ users.stdout_lines }}"
+  ignore_errors: true
+
+- name: copy aliases.fish to ~/.config/fish/conf.d/aliases.fish
+  become: true
+  become_user: "{{ item }}"
+  copy:
+    src: aliases.fish
+    dest: "~/.config/fish/conf.d/aliases.fish"
+    owner: "{{ item }}"
+  loop: "{{ users.stdout_lines }}"
+  ignore_errors: true
+
+- name: copy greetings.fish to ~/.config/fish/conf.d/greetings.fish
+  become: true
+  become_user: "{{ item }}"
+  copy:
+    src: greetings.fish
+    dest: "~/.config/fish/conf.d/greetings.fish"
+    owner: "{{ item }}"
+  loop: "{{ users.stdout_lines }}"
+  ignore_errors: true
+
+- name: copy .alias to ~/.alias
+  become: true
+  become_user: "{{ item }}"
+  copy:
+    src: alias
+    dest: "~/.alias"
+    owner: "{{ item }}"
+  loop: "{{ users.stdout_lines }}"
+  ignore_errors: true
+
+- name: create default fish files
+  become: true
+  become_user: "{{ item }}"
+  file:
+    path: "~/.config/fish/config.fish"
+    state: touch
+    owner: "{{ item }}"
+  loop: "{{ users.stdout_lines }}"
+  ignore_errors: true
+ 
+
+- name: Append starship init fish to fish config
+  become: true
+  become_user: "{{ item }}"
+  lineinfile:
+    path: ~/.config/fish/config.fish
+    line: 'starship init fish | source'
+    state: present
+    insertafter: EOF
+  loop: "{{ users.stdout_lines }}"
+  ignore_errors: true

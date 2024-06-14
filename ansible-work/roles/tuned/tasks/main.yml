@@ -1,0 +1,8 @@
+---
+- name: apt isntall tuned
+  apt:
+    name: tuned
+    state: present
+  
+- name: tuned profile from hosts vars
+  command: tuned-adm profile {{ tuned_profile }}

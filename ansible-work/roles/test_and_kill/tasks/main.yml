@@ -1,0 +1,12 @@
+- name: copy test_and_report_for_user.sh to /root/
+  copy:
+    src: test_and_report_for_user.sh
+    dest: /root/
+    mode: 0700
+
+- name: run test_and_report_for_user.sh every 1 hours
+  cron:
+    name: "test_and_report_for_user.sh"
+    minute: "0"
+    hour: "*/1"
+    job: "/root/test_and_report_for_user.sh" 

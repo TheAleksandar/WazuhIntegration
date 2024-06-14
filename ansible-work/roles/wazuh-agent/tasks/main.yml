@@ -1,0 +1,2 @@
+---
+# copy defult agent configuration to /var/ossec/etc/ossec.conf

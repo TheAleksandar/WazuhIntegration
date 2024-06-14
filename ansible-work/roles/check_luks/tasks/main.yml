@@ -1,0 +1,16 @@
+---
+# Dangerous, and very weak test for luks
+
+- name: test if cat /etc/crypttab is empty
+  command: cat /etc/crypttab
+  register: crypttab
+  ignore_errors: true
+
+- name: check if crypttab is empty and if so, disable network-manager
+  block:
+    - name: disable network-manager
+      service:
+        name: network-manager
+        state: stopped
+        enabled: no
+  when: crypttab.stdout == ""

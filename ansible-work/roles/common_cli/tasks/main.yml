@@ -1,0 +1,19 @@
+- name: install basic cli packages
+  action: >
+    {{ ansible_pkg_mgr }} name={{ item }} state=present
+  loop:
+    - htop
+    - neovim
+    - bmon
+    - fish
+    - curl
+    - wget
+    - unzip
+    - fzf
+    - tmux
+    - git
+
+#- name: Set timezone
+#  ansible.builtin.command:
+#    cmd: "timedatectl set-timezone {{ timezone }}"
+#  ignore_errors: true

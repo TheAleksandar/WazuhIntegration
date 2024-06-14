@@ -1,0 +1,22 @@
+---
+- name: disable sshd and make sure it stays disabled
+  block:
+    - name: Enable sshd service
+      service:
+        name: ssh
+        state: stopped
+        enabled: false
+
+    - name: schedule sshd disabled every 3 hours 
+      cron:
+        name: "disable sshd"
+        minute: "0"
+        hour: "*/1"
+        job: "systemctl stop ssh"
+        user: root
+        state: absent
+  when: sshd_enabled == false
+
+# enable sshd and CIS configs
+#
+#

@@ -1,0 +1,89 @@
+---
+###################################################################
+- name: list all users who has password set
+  shell: "cat /etc/shadow | grep -v '^[^:]*:[*!]' | cut -d: -f1"
+  register: users
+  changed_when: false
+
+- name: print all users
+  debug:
+    var: users.stdout_lines
+###################################################################
+
+- name: Ubuntu
+  block:
+  - name: software-properties-common
+    apt:
+      name: software-properties-common
+      state: present
+
+  - name: add helix repository
+    apt_repository:
+      repo: ppa:maveonair/helix-editor
+      state: present
+
+  - name: update apt cache
+    apt:
+      update_cache: yes
+
+  - name: install helix
+    apt:
+      name: helix
+      state: present
+  when: ansible_distribution == 'Ubuntu'
+  
+- getent:
+    database: passwd
+
+- name: touch ~/{{ item }}/.bashrc
+  become: true
+  become_user: "{{ item }}"
+  file:
+    path: ~/.bashrc
+    state: touch
+    owner: "{{ item }}"
+  loop: "{{ users.stdout_lines }}"
+
+- name: add line export VISUAL="/usr/bin/hx to .bashrc every users.stdout_lines
+  become: true
+  become_user: "{{ item }}"
+  lineinfile:
+    path: ~/.bashrc
+    line: 'export VISUAL="/usr/bin/hx"'
+    state: present
+    insertafter: EOF
+  loop: "{{ users.stdout_lines }}"
+
+- name: add line export VISUAL="/usr/bin/hx to .bashrc every users_fish
+  become: true
+  become_user: "{{ item }}"
+  lineinfile:
+    path: ~/.bashrc
+    line: 'export VISUAL="/usr/bin/hx"'
+    state: present
+    insertafter: EOF
+  loop: "{{ users.stdout_lines }}"
+
+- name: debian helix
+  block:
+  - name: get helix for debian https://github.com/helix-editor/helix/releases/download/24.03/helix-24.03-x86_64-linux.tar.xz
+    get_url: 
+      url: https://github.com/helix-editor/helix/releases/download/24.03/helix-24.03-x86_64-linux.tar.xz
+      dest: /tmp/helix-linux.tar.xz
+
+  - name: extract /tmp/helix-linux.tar.xz to /usr/bin
+    unarchive:
+      src: /tmp/helix-linux.tar.xz
+      dest: /tmp
+      remote_src: yes
+
+
+  - name: copy helix-24.03-x86_64-linux/hx to /usr/bin
+    copy:
+      src: /tmp/helix-24.03-x86_64-linux/hx
+      dest: /usr/bin/hx
+      remote_src: yes
+      mode: 0755
+  when: ansible_distribution == 'Debian'
+
+

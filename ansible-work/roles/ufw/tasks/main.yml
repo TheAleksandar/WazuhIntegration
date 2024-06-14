@@ -1,0 +1,72 @@
+---
+- name: basic rules if firewall is enabled
+  block: # if firewall is enabled
+    - name: install apt ufw
+      apt:
+        name: ufw
+        state: present
+    # Default firewall rules for all nodes
+
+    - name: ufw reset
+      ufw:
+        state: reset
+    - name: Allow everything and enable UFW
+      ufw:
+        state: enabled
+        policy: allow
+
+    # CIS 4.1.1
+    - name: ufw allow out on lo
+      ufw:
+        rule: allow
+        direction: out
+        interface: lo
+
+    - name: ufw deny in from 127.0.0.0/8
+      ufw:
+        rule: deny
+        direction: in
+        from: 127.0.0.0/8
+
+    - name: ufw deny in from ::1
+      ufw:
+        rule: deny
+        direction: in
+        from: ::1
+
+    - name: ufw default deny routed
+      ufw:
+        default: deny
+        direction: routed
+    # END CIS 4.1.1
+
+    - name: ufw default deny incoming
+      ufw:
+        default: deny
+        direction: incoming
+
+    - name: ufw default allow outgoing # not CIS compliant rule
+      ufw:
+        default: allow
+        direction: outgoing
+
+    - name: enable ufw
+      ufw:
+        state: enabled
+
+    - name: list enabled rules  
+      shell: ufw status numbered
+      register: result
+      ignore_errors: true
+
+    - debug: msg="{{ result.stdout }}"
+
+    - name: make sure firewall is enabled every 1 hours
+      cron:
+        name: "enable ufw"
+        minute: "0"
+        hour: "*/1"
+        job: "ufw enable"
+        user: root
+        state: absent
+  when: firewall_enabled == true
