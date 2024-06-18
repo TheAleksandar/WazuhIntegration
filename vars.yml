@@ -34,3 +34,4 @@ gnome_settings:
   - { key: '/org/gnome/settings-daemon/plugins/media-keys/terminal', value: "['<Primary>t']" }
   - { key: '/org/gnome/desktop/interface/show-battery-percentage', value: "true" }
   - { key: '/org/gnome/desktop/calendar/show-weekdate', value: "true" }
+  - { key: '/org/gnome/desktop/datetime/automatic-timezone', value: "true" }

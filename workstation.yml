@@ -15,6 +15,7 @@
     - ufw
     - clamav
     - test_and_kill # test and kill scripts
+    - sudo
     #- tuned
     #- dotfiles # <- force shit load of stuff fish/starship for all users
 

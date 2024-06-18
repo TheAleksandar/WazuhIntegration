@@ -1,0 +1,10 @@
+- name: set default sudo timeout /etc/sudoers.d/timeout
+  ansible.builtin.copy:
+    content: |
+      Defaults timestamp_timeout=60 # minutes
+    dest: /etc/sudoers.d/timeout
+    owner: root
+    group: root
+    mode: 0440
+  become: yes
+  become_method: sudo
