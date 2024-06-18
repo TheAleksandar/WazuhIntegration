@@ -17,4 +17,20 @@ tuned_profile: "laptop-battery-powersave"
 #tuned_profile: "laptop-ac-powersave"
 #tuned_profile: "desktop"
 
-
+gnome_settings:
+  - { key: '/org/gnome/settings-daemon/plugins/color/night-light-enabled', value: 'true' }
+  - { key: '/org/gnome/desktop/privacy/remember-recent-files', value: 'true' }
+  - { key: '/org/gnome/desktop/privacy/remove-old-trash-files', value: 'true' }
+  - { key: '/org/gnome/desktop/privacy/remove-old-temp-files', value: 'true' }
+  - { key: '/org/gnome/desktop/privacy/old-files-age', value: 'uint32 14' }
+  - { key: '/org/gnome/desktop/session/idle-delay', value: 'uint32 480' }
+  - { key: '/org/gnome/desktop/screensaver/lock-delay', value: 'uint32 1800' }
+  - { key: '/org/gnome/desktop/interface/clock-format', value: "'24h'" }
+  - { key: '/org/gtk/settings/file-chooser/clock-format', value: "'24h'" }
+  - { key: '/org/gnome/desktop/wm/preferences/button-layout', value: "'appmenu:minimize,maximize,close'" }
+  - { key: '/org/gnome/desktop/wm/preferences/focus-mode', value: "'sloppy'" }
+  - { key: '/org/gnome/desktop/wm/preferences/visual-bell', value: "false" }
+  - { key: '/org/gnome/desktop/wm/preferences/visual-bell-type', value: "'fullscreen-flash'" }
+  - { key: '/org/gnome/settings-daemon/plugins/media-keys/terminal', value: "['<Primary>t']" }
+  - { key: '/org/gnome/desktop/interface/show-battery-percentage', value: "true" }
+  - { key: '/org/gnome/desktop/calendar/show-weekdate', value: "true" }
