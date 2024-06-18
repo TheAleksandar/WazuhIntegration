@@ -12,9 +12,7 @@ sudo ansible-playbook -K --connection=local --inventory 127.0.0.1, workstation.y
 
 OR
 
-bash install-laptop.sh
-
-Brutaly overdrive shell with fish/starship and makes helix as default editor
+If you feel like an adventurer, feel free to edit vars.yml. Brutaly overdrive shell with fish/starship and makes helix as default editor.
 
 # Personal Info and Logs
 
