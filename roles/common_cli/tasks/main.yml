@@ -12,6 +12,10 @@
     - fzf
     - tmux
     - git
+    - taskwarrior
+    - ripgrep
+    - jq
+    
 
 #- name: Set timezone
 #  ansible.builtin.command:
