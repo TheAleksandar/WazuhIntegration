@@ -1,4 +1,4 @@
-# Wazuh Integration
+# Wazuh Integration 
 
 Wazuh Integration Repository Description:
 
